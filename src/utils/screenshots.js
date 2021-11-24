@@ -1,5 +1,6 @@
 import tfjsFracRec from '../utils/tfjsFracRec'
 import img2cesium from './img2cesium';
+import tfjsFracRec2 from '../utils/tfjsFracRec2'
 export default function (viewer) {
     function btn2() {
         let canvas_cover = document.getElementById("canvas_cover")
@@ -85,16 +86,60 @@ export default function (viewer) {
                 //把active_canvas改为box_canvas
                 let doms = document.getElementsByClassName("active_canvas");
                 for (let i = 0; i < doms.length; i++) {
-                    //识别图像
-                    tfjsFracRec(doms[i]).then(data => {
-                        //三维映射
-                        img2cesium({ data, canvas: doms[i], startX, startY, viewer })
-                        //doms[i].classList.replace('active_canvas', 'box_canvas')
-                        doms[i].parentNode.removeChild(doms[i])
-                        btn2()
+                    //截图图像总长宽
+                    let W = doms[i].width
+                    let H = doms[i].height
+                    console.log('---总长宽----', W, H);
+                    //被256*256分割横向与纵向的数量
+                    let W_number = Math.round(W / 256) == 0 ? 1 : Math.round(W / 256)
+                    let H_number = Math.round(H / 256) == 0 ? 1 : Math.round(H / 256)
+                    console.log('---数量----', W_number, H_number);
+                    //每个小图形的长宽 注意分割canvas要注意除不整的情况
+
+                    let w = Math.floor(W / W_number)
+                    let w_last = W - (W_number - 1) * w
+                    let h = Math.floor(H / H_number)
+                    let h_last = H - (H_number - 1) * h
+
+                    //开始分割
+                    //沿着横向分割
+                    for (let a = 0; a < W_number; a++) {
+                        //沿着横向分割
+                        for (let b = 0; b < H_number; b++) {
+                            let current_w = a == W_number - 1 ? w_last : w
+                            let current_h = b == H_number - 1 ? h_last : h
+                            //console.log(a, b, current_w, current_h);
+                            let canvas = document.createElement('canvas')
+                            canvas.classList.add("mini_canvas");
+                            canvas.style.cssText = `background: red;position: absolute; opacity:1; cursor: move;`
+                            canvas.style.top = startY + h * b + 'px';
+                            canvas.style.left = startX + w * a + 'px';
+                            canvas.style.width = current_w + 'px';
+                            canvas.style.height = current_h + 'px';
 
 
-                    })
+                            canvas.width = current_w
+                            canvas.height = current_h
+                            let context = canvas.getContext('2d');
+                            let imagedata = doms[i].getContext('2d').getImageData(w * a, h * b, current_w, current_h);
+                            context.putImageData(imagedata, 0, 0);
+                            //cesium_widget.appendChild(canvas);
+                            //判断是否移除遮罩和active_box
+                            let isClose = a == W_number - 1 && b == H_number - 1 ? true : false
+
+                            let callback = (data) => {
+                                img2cesium({ data: data, canvas: canvas, startX: startX + w * a, startY: startY + h * b, viewer })
+                                if (isClose) {
+                                    doms[i].parentNode.removeChild(doms[i])
+                                    btn2()
+                                }
+                            }
+                            let str = a.toString() + ',' + b.toString()
+                            tfjsFracRec2({ myCanvas: canvas, callback,str })
+
+                        }
+
+                    }
                 }
 
             }

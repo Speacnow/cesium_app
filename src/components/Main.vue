@@ -45,6 +45,14 @@ onMounted(() => {
     }
     //加载截图功能
     screenshots(viewer);
+    // var myWorker = new Worker('/worker.js');
+    // myWorker.postMessage('来自外部的数据');
+
+    // myWorker.onmessage = function (e) {
+    //     console.log("来自内部的数据：",e.data);
+    // }
+
+
 
 
 
