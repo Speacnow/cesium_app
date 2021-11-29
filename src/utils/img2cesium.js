@@ -1,22 +1,27 @@
 import * as Cesium from "cesium";
 export default function (obj) {
-    let { data, canvas, startX, startY, viewer } = obj
+    let { data, width, startX, startY, viewer } = obj
 
-    let cw = canvas.width
+    let cw = width
     const t1 = new Date();
+    let points = viewer.scene.primitives.add(
+        new Cesium.PointPrimitiveCollection({
+            modelMatrix: Cesium.Matrix4.IDENTITY,
+            //debugShowBoundingVolume: false,
+            // OPAQUE 完全不透明；TRANSLUCENT 完全透明；OPAQUE_AND_TRANSLUCENT 不透明和半透明
+            blendOption: Cesium.BlendOption.TRANSLUCENT,
+        })
+    );
     data.forEach((e, i) => {
         if (e == 1) {
-            let ew = i % cw + startX;
-            let eh = Math.floor(i / cw) + startY
+            let ew = (i + 1) % cw + startX;
+            let eh = Math.ceil((i+1) / cw) + startY
             let cor = new Cesium.Cartesian2(ew, eh)
             let position = viewer.scene.pickPosition(cor)
-            viewer.entities.add({
+            points.add({
                 position: position,
-                point: {
-                    pixelSize: 5,
-                    color: Cesium.Color.RED,
-                    //heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                },
+                pixelSize: 3,
+                color: Cesium.Color.RED,
             });
 
         }

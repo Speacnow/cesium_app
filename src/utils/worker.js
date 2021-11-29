@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs'
 const MODEL_URL = '/v7/model.json';
 onmessage = function (e) {
-    let { x, ow, oh, str } = e.data;
-    console.log(str + '---worker start');
+    let { x, ow, oh, seq } = e.data;
+    console.log(seq.a, seq.b,'---worker start');
     (async function () {
 
         //tf.setBackend('cpu')

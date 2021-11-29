@@ -1,6 +1,7 @@
 import tfjsFracRec from '../utils/tfjsFracRec'
 import img2cesium from './img2cesium';
 import tfjsFracRec2 from '../utils/tfjsFracRec2'
+import img2cesium2 from './img2cesium2';
 export default function (viewer) {
     function btn2() {
         let canvas_cover = document.getElementById("canvas_cover")
@@ -101,8 +102,11 @@ export default function (viewer) {
                     let h = Math.floor(H / H_number)
                     let h_last = H - (H_number - 1) * h
 
+                    //let all_result_array = [];
+                    let all_result_array_squence = new Array(W * H).fill(-1)
                     //开始分割
                     //沿着横向分割
+
                     for (let a = 0; a < W_number; a++) {
                         //沿着横向分割
                         for (let b = 0; b < H_number; b++) {
@@ -116,8 +120,6 @@ export default function (viewer) {
                             canvas.style.left = startX + w * a + 'px';
                             canvas.style.width = current_w + 'px';
                             canvas.style.height = current_h + 'px';
-
-
                             canvas.width = current_w
                             canvas.height = current_h
                             let context = canvas.getContext('2d');
@@ -125,17 +127,25 @@ export default function (viewer) {
                             context.putImageData(imagedata, 0, 0);
                             //cesium_widget.appendChild(canvas);
                             //判断是否移除遮罩和active_box
-                            let isClose = a == W_number - 1 && b == H_number - 1 ? true : false
-
+                            // let isClose = a == W_number - 1 && b == H_number - 1 ? true : false
                             let callback = (data) => {
-                                img2cesium({ data: data, canvas: canvas, startX: startX + w * a, startY: startY + h * b, viewer })
-                                if (isClose) {
+                                img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+
+                                for (let q = 0; q < current_h; q++) {
+                                    let slice = data.slice(q * current_w, (q + 1) * current_w)
+                                    let start = (b * h + q) * W + a * w
+                                    all_result_array_squence.splice(start, current_w, ...slice)
+                                }
+                                //是否到了最后一个分割图像,到了就绘制网格
+                                if (!all_result_array_squence.includes(-1)) {
+                                    console.log('---遍历完了----');
+                                    img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
                                     doms[i].parentNode.removeChild(doms[i])
                                     btn2()
                                 }
                             }
-                            let str = a.toString() + ',' + b.toString()
-                            tfjsFracRec2({ myCanvas: canvas, callback,str })
+                            let seq = { a, b }
+                            tfjsFracRec2({ myCanvas: canvas, callback, seq })
 
                         }
 
