@@ -3,6 +3,10 @@
     <button id="btn1">截图</button>
     <button id="btn2">退出</button>
     <button id="btn3">视图</button>
+    <select id="select">
+        <option value="polygon">未开启图像细化</option>
+        <option value="line">开启图像细化</option>
+    </select>
     <div id="cesiumContainer"></div>
 </template>
 <script setup>
@@ -14,6 +18,8 @@ import screenshots from '../utils/screenshots'
 // import * as tf from '@tensorflow/tfjs'
 
 onMounted(() => {
+    
+    
     const viewer = new Cesium.Viewer('cesiumContainer', {
         animation: false,    //左下角的动画仪表盘
         baseLayerPicker: false,  //右上角的图层选择按钮

@@ -2,6 +2,8 @@ import tfjsFracRec from '../utils/tfjsFracRec'
 import img2cesium from './img2cesium';
 import tfjsFracRec2 from '../utils/tfjsFracRec2'
 import img2cesium2 from './img2cesium2';
+import img2cesium3 from './img2cesium3';
+import thinning_track from './thinning_track';
 export default function (viewer) {
     function btn2() {
         let canvas_cover = document.getElementById("canvas_cover")
@@ -129,22 +131,49 @@ export default function (viewer) {
                             //判断是否移除遮罩和active_box
                             // let isClose = a == W_number - 1 && b == H_number - 1 ? true : false
                             let callback = (data) => {
-                                //绘制点
-                                img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
 
+                                //整合零散的canvas数据，使之最后变成一张大的
                                 for (let q = 0; q < current_h; q++) {
                                     let slice = data.slice(q * current_w, (q + 1) * current_w)
                                     let start = (b * h + q) * W + a * w
                                     all_result_array_squence.splice(start, current_w, ...slice)
                                 }
-                                //是否到了最后一个分割图像,到了就绘制网格
-                                if (!all_result_array_squence.includes(-1)) {
-                                    console.log('---遍历完了----');
-                                    //绘制点的连线
-                                    img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
-                                    doms[i].parentNode.removeChild(doms[i])
-                                    btn2()
+
+                                if (document.getElementById("select").value == 'polygon') {
+                                    //绘制点
+                                    img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+
+
+                                    //是否到了最后一个分割图像,到了就绘制网格
+                                    if (!all_result_array_squence.includes(-1)) {
+                                        console.log('---遍历完了----');
+
+
+                                        //绘制点的连线
+                                        img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
+                                        doms[i].parentNode.removeChild(doms[i])
+                                        btn2()
+
+
+                                    }
                                 }
+                                else {
+                                    if (!all_result_array_squence.includes(-1)) {
+                                        console.log('---遍历完了----');
+                                        let lines = thinning_track(all_result_array_squence, W, H)
+
+
+
+                                        img2cesium3({ lines, W, H, startX, startY, viewer })
+                                        doms[i].parentNode.removeChild(doms[i])
+                                        btn2()
+                                    }
+
+
+                                }
+
+
+
                             }
                             let seq = { a, b }
                             tfjsFracRec2({ myCanvas: canvas, callback, seq })
