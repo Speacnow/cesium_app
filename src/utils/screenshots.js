@@ -129,6 +129,7 @@ export default function (viewer) {
                             //判断是否移除遮罩和active_box
                             // let isClose = a == W_number - 1 && b == H_number - 1 ? true : false
                             let callback = (data) => {
+                                //绘制点
                                 img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
 
                                 for (let q = 0; q < current_h; q++) {
@@ -139,6 +140,7 @@ export default function (viewer) {
                                 //是否到了最后一个分割图像,到了就绘制网格
                                 if (!all_result_array_squence.includes(-1)) {
                                     console.log('---遍历完了----');
+                                    //绘制点的连线
                                     img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
                                     doms[i].parentNode.removeChild(doms[i])
                                     btn2()
