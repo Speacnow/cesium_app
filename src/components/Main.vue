@@ -1,21 +1,82 @@
 
 <template>
-    <button id="btn1">截图</button>
-    <button id="btn2">退出</button>
-    <button id="btn3">视图</button>
-    <select id="select">
-        <option value="polygon">未开启图像细化</option>
-        <option value="line">开启图像细化</option>
-    </select>
-    <div id="cesiumContainer"></div>
+    <div style=" position: fixed; bottom:0">
+        <button id="btn1">截图</button>
+        <button id="btn2">退出</button>
+        <button id="btn3">视图</button>
+        <select id="select">
+            <option value="polygon">未开启图像细化</option>
+            <option value="line">开启图像细化</option>
+        </select>
+    </div>
+
+    <el-container style="margin:0;padding:0">
+        <el-header style="margin:0;padding:0">
+            <el-col :span="19" :offset="1" id="col1">
+                <em>野外地质露头数字云平台</em>
+            </el-col>
+            <el-col :span="3" :offset="1" id="col2">
+                <span>新疆一间房三维模型</span>
+            </el-col>
+
+            <el-col :span="10" :offset="12" id="col2">用户：admin</el-col>
+        </el-header>
+        <div id="menu">
+            <div class="gong">
+                <img src="../assets/images/cl.png" alt /> &nbsp;量测⏷
+            </div>
+            <div class="gong">
+                <img src="../assets/images/dw.png" alt /> &nbsp;模型标绘⏷
+            </div>
+            <div class="gong">
+                <img src="../assets/images/cl.png" alt /> 空间分析⏷
+            </div>
+            <div class="gong">
+                <img src="../assets/images/gjx.png" alt /> &nbsp;工具箱⏷
+            </div>
+            <div class="gong">
+                <img src="../assets/images/kz.png" alt /> 裂缝识别
+                <div class="up"></div>
+            </div>
+        </div>
+        <div id="uparrow"></div>
+        <div id="menu2">
+            <div style="border-bottom:1px dashed black;margin-bottom:5px">
+                <span style="font-size: smaller ;font-weight:bold">选择模型计算方式：</span>
+
+                <el-radio-group v-model="radio1">
+                    <el-radio :label="1" size="large">GPU模式</el-radio>
+                    <el-radio :label="2" size="large">CPU模式&nbsp;&nbsp;&nbsp;&nbsp;</el-radio>
+                </el-radio-group>
+            </div>
+            <div style="border-bottom:1px dashed black;margin-bottom:5px">
+                <span style="font-size: smaller ;font-weight:bold">选择裂缝可视化方式：</span>
+
+                <el-radio-group v-model="radio2">
+                    <el-radio :label="3" size="large">逐像素点可视化</el-radio>
+                    <el-radio :label="4" size="large">邻点连接可视化</el-radio>
+                    <el-radio :label="5" size="large">裂缝中轴线可视化</el-radio>
+                </el-radio-group>
+            </div>
+            <el-button style="font-size: smaller ;font-weight:bold">确定</el-button>
+        </div>
+        <el-main style="margin:0;padding:0">
+            <div id="cesiumContainer" style="width:100%;height:100%;margin:0;padding:0"></div>
+        </el-main>
+    </el-container>
 </template>
 <script setup>
 import { onMounted } from 'vue'
 import * as Cesium from "cesium";
 // import tfjsFracRec from '../utils/tfjsFracRec'
 import screenshots from '../utils/screenshots'
+import { ArrowDown } from '@element-plus/icons-vue'
+import { ref } from 'vue'
 
 // import * as tf from '@tensorflow/tfjs'
+const radio1 = ref('1')
+const radio2 = ref('3')
+
 
 onMounted(() => {
 
@@ -87,5 +148,90 @@ onMounted(() => {
     position: absolute;
     opacity: 1;
     cursor: move;
+}
+/* .el-main{
+    margin:0%;
+    padding:0%
+} */
+.el-header {
+    background: rgb(0, 10, 27);
+}
+#col1 {
+    font-size: xx-large;
+    color: aliceblue;
+    font-weight: bolder;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#col2 {
+    font-size: small;
+    color: aliceblue;
+
+    position: relative;
+    top: 50%;
+    transform: translateY(0%);
+}
+#menu {
+    position: fixed;
+    top: 80px;
+    right: 110px;
+    width: 500px;
+    height: 40px;
+
+    background: white;
+    z-index: 100;
+    border-radius: 2px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.gong {
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#menu2 {
+    padding: 10px;
+    position: fixed;
+    top: 133px;
+    right: 110px;
+    width: 210px;
+    height: 240px;
+
+    background: white;
+    z-index: 100;
+    border-radius: 5px;
+    /* display: flex;
+    justify-content: space-around;
+    align-items: center; */
+}
+#uparrow {
+    position: fixed;
+    top: 113px;
+    right: 148px;
+    width: 0px;
+    height: 0px;
+    background: black;
+    z-index: 99;
+
+    border-top: 10px solid rgb(178, 161, 153);
+    border-right: 10px solid rgb(178, 161, 153);
+
+    border-left: 10px solid rgb(178, 161, 153);
+    border-bottom: 10px solid white;
+}
+.up {
+    width: 0px;
+    height: 0px;
+
+    border-top: 5px solid white;
+    border-right: 5px solid white;
+
+    border-left: 5px solid white;
+    border-bottom: 5px solid black;
 }
 </style>
