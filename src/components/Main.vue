@@ -18,8 +18,8 @@ import screenshots from '../utils/screenshots'
 // import * as tf from '@tensorflow/tfjs'
 
 onMounted(() => {
-    
-    
+
+
     const viewer = new Cesium.Viewer('cesiumContainer', {
         animation: false,    //左下角的动画仪表盘
         baseLayerPicker: false,  //右上角的图层选择按钮
@@ -37,7 +37,8 @@ onMounted(() => {
     });
     document.getElementsByClassName('cesium-viewer-bottom')?.[0].parentNode.removeChild(document.getElementsByClassName('cesium-viewer-bottom')?.[0]);
     let palaceTileset = new Cesium.Cesium3DTileset({
-        url: '/text_3dtile/tileset.json',
+        // url: '/text_3dtile/tileset.json',
+        url: "http://111.229.182.114:8090/datong/lingshandao3D/tileset.json",
         maximumScreenSpaceError: 2,//最大的屏幕空间误差
         maximumNumberOfLoadedTiles: 1000//最大加载瓦片个数
 
