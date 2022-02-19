@@ -4,6 +4,7 @@ import tfjsFracRec2 from '../utils/tfjsFracRec2'
 import img2cesium2 from './img2cesium2';
 import img2cesium3 from './img2cesium3';
 import thinning_track from './thinning_track';
+import draw from './draw';
 export default function (viewer) {
     function btn2() {
         let canvas_cover = document.getElementById("canvas_cover")
@@ -109,6 +110,8 @@ export default function (viewer) {
                     //开始分割
                     //沿着横向分割
 
+                    let btn4_click = null;
+
                     for (let a = 0; a < W_number; a++) {
                         //沿着横向分割
                         for (let b = 0; b < H_number; b++) {
@@ -138,39 +141,105 @@ export default function (viewer) {
                                     let start = (b * h + q) * W + a * w
                                     all_result_array_squence.splice(start, current_w, ...slice)
                                 }
-
-                                if (document.getElementById("select").value == 'polygon') {
-                                    //绘制点
-                                    img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
-
-
-                                    //是否到了最后一个分割图像,到了就绘制网格
-                                    if (!all_result_array_squence.includes(-1)) {
-                                        console.log('---遍历完了----');
-
-
-                                        //绘制点的连线
-                                        img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
-                                        doms[i].parentNode.removeChild(doms[i])
-                                        btn2()
-
-
+                                if (!all_result_array_squence.includes(-1)) {
+                                    //b遍历完了
+                                    console.log('---------遍历完了----------');
+                                    console.log(all_result_array_squence);
+                                    let imageData = doms[i].getContext('2d').getImageData(0, 0, W, H);
+                                    let length = W * H * 4;
+                                    for (var index = 0; index < length; index += 4) {
+                                        if (all_result_array_squence[index / 4] == 0) {
+                                            imageData.data[index] = 0;
+                                            imageData.data[index + 1] = 0;
+                                            imageData.data[index + 2] = 0;
+                                        } else {
+                                            imageData.data[index] = 255;
+                                            imageData.data[index + 1] = 255;
+                                            imageData.data[index + 2] = 255
+                                        }
                                     }
+
+                                    doms[i].getContext('2d').putImageData(imageData, 0, 0);
+                                    //开启绘图功能
+                                    draw(doms[i])
+                                    //let array = new Array(all_result_array_squence.length).fill(-1)
+                                    btn4_click = function () {
+                                        
+                                        let imageData = doms[i].getContext('2d').getImageData(0, 0, W, H);
+                                        let length = W * H * 4;
+                                        for (var index = 0; index < length; index += 4) {
+
+                                            if (imageData.data[index] == 0 && imageData.data[index + 1] == 0 && imageData.data[index + 2] == 0)
+                                            all_result_array_squence[index / 4] = 0
+
+                                            else {
+                                                all_result_array_squence[index / 4] = 1
+                                            }
+
+
+                                        }
+                                        
+
+                                        if (document.getElementById("select").value == 'polygon') {
+                                            img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
+                                            //逐像素绘制点
+                                            img2cesium({ data: all_result_array_squence, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+                                            doms[i].parentNode.removeChild(doms[i])
+                                            btn2()
+                                        }
+                                        else {
+                                            let lines = thinning_track(all_result_array_squence, W, H)
+                                            img2cesium3({ lines, W, H, startX, startY, viewer })
+                                            doms[i].parentNode.removeChild(doms[i])
+                                            btn2()
+                                        }
+                                    }
+                                    document.getElementById('btn4').onclick = btn4_click;
+
                                 }
                                 else {
-                                    if (!all_result_array_squence.includes(-1)) {
-                                        console.log('---遍历完了----');
-                                        let lines = thinning_track(all_result_array_squence, W, H)
-
-
-
-                                        img2cesium3({ lines, W, H, startX, startY, viewer })
-                                        doms[i].parentNode.removeChild(doms[i])
-                                        btn2()
-                                    }
-
+                                    btn4_click = null;
+                                    document.getElementById('btn4').onclick = btn4_click;
 
                                 }
+
+
+                                // if (document.getElementById("select").value == 'polygon') {
+
+
+
+
+                                //     //是否到了最后一个分割图像,到了就绘制网格
+                                //     if (!all_result_array_squence.includes(-1)) {
+                                //         console.log('---遍历完了----');
+
+
+                                //         //绘制点的连线
+                                //         img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
+                                //         // doms[i].parentNode.removeChild(doms[i])
+                                //         // btn2()
+
+
+                                //     }
+                                //     //逐像素绘制点
+                                //     img2cesium({ data: data, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+                                //     doms[i].parentNode.removeChild(doms[i])
+                                //     btn2()
+                                // }
+                                // else {
+                                //     if (!all_result_array_squence.includes(-1)) {
+                                //         console.log('---遍历完了----');
+                                //         let lines = thinning_track(all_result_array_squence, W, H)
+
+
+
+                                //         img2cesium3({ lines, W, H, startX, startY, viewer })
+                                //         doms[i].parentNode.removeChild(doms[i])
+                                //         btn2()
+                                //     }
+
+
+                                // }
 
 
 

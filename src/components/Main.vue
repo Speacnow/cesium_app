@@ -8,6 +8,14 @@
             <option value="polygon">未开启图像细化</option>
             <option value="line">开启图像细化</option>
         </select>
+        &nbsp;&nbsp;&nbsp;
+        <input id="drawWidth" type="text" value="2" style="width:40px"/>
+        &nbsp;&nbsp;&nbsp;
+        <select id="selectDrawColor" >
+            <option value="white">白色</option>
+            <option value="black">黑色</option>
+        </select>
+        <button id="btn4">显示</button>
     </div>
 
     <el-container style="margin:0;padding:0">
@@ -16,7 +24,8 @@
                 <em>野外地质露头数字云平台</em>
             </el-col>
             <el-col :span="3" :offset="1" id="col2">
-                <span>新疆一间房三维模型</span>
+                <!-- <span>新疆一间房三维模型</span> -->
+                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
             </el-col>
 
             <el-col :span="10" :offset="12" id="col2">用户：admin</el-col>
@@ -58,7 +67,7 @@
                     <el-radio :label="5" size="large">裂缝中轴线可视化</el-radio>
                 </el-radio-group>
             </div>
-            <el-button style="font-size: smaller ;font-weight:bold">确定</el-button>
+            <el-button id="con111" style="font-size: smaller ;font-weight:bold">确定</el-button>
         </div>
         <el-main style="margin:0;padding:0">
             <div id="cesiumContainer" style="width:100%;height:100%;margin:0;padding:0"></div>
@@ -119,6 +128,12 @@ onMounted(() => {
     // myWorker.onmessage = function (e) {
     //     console.log("来自内部的数据：",e.data);
     // }
+    document.getElementById('con111').onclick = function () {
+        document.getElementById('menu2').style.display = 'none';
+        document.getElementById('uparrow').style.display = 'none';
+    }
+
+
 
 
 
