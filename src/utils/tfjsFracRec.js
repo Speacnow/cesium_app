@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs'
-const MODEL_URL = '/v7/model.json';
+const MODEL_URL = '/ours/model.json';
 
 function img2Tensor(imgEl) {
     return tf.tidy(() => {

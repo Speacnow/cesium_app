@@ -88,6 +88,7 @@ export default function (viewer) {
                  */
 
                 //把active_canvas改为box_canvas
+                let rate = 256
                 let doms = document.getElementsByClassName("active_canvas");
                 for (let i = 0; i < doms.length; i++) {
                     //截图图像总长宽
@@ -95,8 +96,8 @@ export default function (viewer) {
                     let H = doms[i].height
                     console.log('---总长宽----', W, H);
                     //被256*256分割横向与纵向的数量
-                    let W_number = Math.round(W / 256) == 0 ? 1 : Math.round(W / 256)
-                    let H_number = Math.round(H / 256) == 0 ? 1 : Math.round(H / 256)
+                    let W_number = Math.round(W / rate) == 0 ? 1 : Math.round(W / rate)
+                    let H_number = Math.round(H / rate) == 0 ? 1 : Math.round(H / rate)
                     console.log('---数量----', W_number, H_number);
                     //每个小图形的长宽 注意分割canvas要注意除不整的情况
 
@@ -164,13 +165,13 @@ export default function (viewer) {
                                     draw(doms[i])
                                     //let array = new Array(all_result_array_squence.length).fill(-1)
                                     btn4_click = function () {
-                                        
+
                                         let imageData = doms[i].getContext('2d').getImageData(0, 0, W, H);
                                         let length = W * H * 4;
                                         for (var index = 0; index < length; index += 4) {
 
                                             if (imageData.data[index] == 0 && imageData.data[index + 1] == 0 && imageData.data[index + 2] == 0)
-                                            all_result_array_squence[index / 4] = 0
+                                                all_result_array_squence[index / 4] = 0
 
                                             else {
                                                 all_result_array_squence[index / 4] = 1
@@ -178,12 +179,14 @@ export default function (viewer) {
 
 
                                         }
-                                        
+
 
                                         if (document.getElementById("select").value == 'polygon') {
-                                            img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
+
                                             //逐像素绘制点
-                                            img2cesium({ data: all_result_array_squence, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+                                            //img2cesium({ data: all_result_array_squence, width: current_w, startX: startX + w * a, startY: startY + h * b, viewer })
+                                            //邻点
+                                            img2cesium2({ data: all_result_array_squence, W, H, startX, startY, viewer })
                                             doms[i].parentNode.removeChild(doms[i])
                                             btn2()
                                         }

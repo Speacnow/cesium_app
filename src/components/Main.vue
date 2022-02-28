@@ -9,13 +9,15 @@
             <option value="line">开启图像细化</option>
         </select>
         &nbsp;&nbsp;&nbsp;
-        <input id="drawWidth" type="text" value="2" style="width:40px"/>
+        <input id="drawWidth" type="text" value="2" style="width:40px" />
         &nbsp;&nbsp;&nbsp;
-        <select id="selectDrawColor" >
+        <select id="selectDrawColor">
             <option value="white">白色</option>
             <option value="black">黑色</option>
         </select>
         <button id="btn4">显示</button>
+        <button id="btn5">记录位置</button>
+        <button id="btn6">当前视角</button>
     </div>
 
     <el-container style="margin:0;padding:0">
@@ -44,8 +46,8 @@
                 <img src="../assets/images/gjx.png" alt /> &nbsp;工具箱⏷
             </div>
             <div class="gong">
-                <img src="../assets/images/kz.png" alt /> 裂缝识别
-                <div class="up"></div>
+                <img src="../assets/images/kz.png" alt /> 裂缝识别⏷
+                <!-- <div class="up"></div> -->
             </div>
         </div>
         <div id="uparrow"></div>
@@ -107,7 +109,7 @@ onMounted(() => {
     });
     document.getElementsByClassName('cesium-viewer-bottom')?.[0].parentNode.removeChild(document.getElementsByClassName('cesium-viewer-bottom')?.[0]);
     let palaceTileset = new Cesium.Cesium3DTileset({
-        // url: '/text_3dtile/tileset.json',
+       // url: '/text_3dtile/tileset.json',
         url: "http://111.229.182.114:8090/datong/lingshandao3D/tileset.json",
         maximumScreenSpaceError: 2,//最大的屏幕空间误差
         maximumNumberOfLoadedTiles: 1000//最大加载瓦片个数
@@ -131,6 +133,38 @@ onMounted(() => {
     document.getElementById('con111').onclick = function () {
         document.getElementById('menu2').style.display = 'none';
         document.getElementById('uparrow').style.display = 'none';
+    }
+    document.getElementById('btn5').onclick = function () {
+        let a = {
+            position: viewer.camera.position,
+            heading: viewer.camera.heading,
+            pitch: viewer.camera.pitch,
+            roll:viewer.camera.roll
+        }
+        
+        console.log(`
+        {
+            destination: new Cesium.Cartesian3(${a.position.x},${a.position.y}, ${a.position.z}),
+            orientation:{
+                heading:${a.heading},
+                pitch:${a.pitch},
+                roll: ${a.roll}
+                //roll: Math.pow(,)
+            }
+        }
+        `)  //当前视角
+        console.log(a.roll)
+    }
+    document.getElementById('btn6').onclick = function () {
+        viewer.camera.flyTo({
+            destination: new Cesium.Cartesian3(-2603616.5446332945,4481005.191436875, 3705327.9231358794),
+            orientation:{
+                heading:0.19237215179223544,
+                pitch:-0.1758034864004756,
+                roll: 2.006418142741495e-8
+                //roll: Math.pow(2.006418142741495,-8)
+            }
+        })
     }
 
 

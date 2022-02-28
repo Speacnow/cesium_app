@@ -1,6 +1,7 @@
 import * as Cesium from "cesium";
 export default function (obj) {
     let { lines, W, H, startX, startY, viewer } = obj
+    const t1 = new Date();
 
 
 
@@ -14,6 +15,8 @@ export default function (obj) {
         drawline(array)
 
     });
+    const t2 = new Date();
+    console.log('3D drawing take time: ', (t2 - t1), 'ms');
 
 
 

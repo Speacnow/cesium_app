@@ -22,6 +22,8 @@ export default function (obj) {
                 position: position,
                 pixelSize: 3,
                 color: Cesium.Color.RED,
+                outlineWidth :0
+
             });
 
         }

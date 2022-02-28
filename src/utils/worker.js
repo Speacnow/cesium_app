@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs'
-const MODEL_URL = '/v7/model.json';
+const MODEL_URL = '/ours/model.json';
 onmessage = function (e) {
     let { x, ow, oh, seq } = e.data;
     console.log(seq.a, seq.b,'---worker start');
