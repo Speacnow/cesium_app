@@ -33,7 +33,7 @@
 
             <el-col :span="10" :offset="12" id="col2">用户：admin</el-col>
         </el-header>
-        <div id="menu" >
+        <div id="menu">
             <div class="gong">
                 <img src="../assets/images/cl.png" alt /> &nbsp;量测⏷
             </div>
@@ -70,7 +70,7 @@
                     <el-radio :label="5" size="large">裂缝中轴线可视化</el-radio>
                 </el-radio-group>
             </div>
-            <el-button  style="font-size: smaller ;font-weight:bold">确定</el-button>
+            <el-button style="font-size: smaller ;font-weight:bold">确定</el-button>
         </div>
         <el-main style="margin:0;padding:0">
             <div id="cesiumContainer" style="width:100%;height:100%;margin:0;padding:0"></div>
@@ -78,15 +78,30 @@
     </el-container>
 </template>
 <script setup>
-import { onMounted } from 'vue'
+import { onBeforeMount, onMounted } from 'vue'
 import * as Cesium from "cesium";
 // import tfjsFracRec from '../utils/tfjsFracRec'
 import screenshots from '../utils/screenshots'
 import { ref } from 'vue'
+import * as tf from '@tensorflow/tfjs'
+const MODEL_URL = '/ours/model.json';
+
 
 // import * as tf from '@tensorflow/tfjs'
 const radio1 = ref('1')
 const radio2 = ref('3')
+
+// var model = null
+
+// onBeforeMount(() => {
+//     new Promise((r, j) => {
+//         let a = tf.loadGraphModel(MODEL_URL);
+//         r(a)
+//     }).then(a=>{
+//         model = a
+//         console.log(model);
+//     })
+// })
 
 
 onMounted(() => {
@@ -109,8 +124,8 @@ onMounted(() => {
     });
     document.getElementsByClassName('cesium-viewer-bottom')?.[0].parentNode.removeChild(document.getElementsByClassName('cesium-viewer-bottom')?.[0]);
     let palaceTileset = new Cesium.Cesium3DTileset({
-       // url: '/text_3dtile/tileset.json',
-        url: "http://111.229.182.114:8090/datong/lingshandao3D/tileset.json",
+        url: '/text_3dtile/tileset.json',
+        //url: "http://111.229.182.114:8090/datong/lingshandao3D/tileset.json",
         maximumScreenSpaceError: 2,//最大的屏幕空间误差
         maximumNumberOfLoadedTiles: 1000//最大加载瓦片个数
 
@@ -123,7 +138,15 @@ onMounted(() => {
         viewer.zoomTo(tileset)
     }
     //加载截图功能
-    screenshots(viewer);
+    
+    new Promise((r, j) => {
+        let model = tf.loadGraphModel(MODEL_URL);
+        r(model)
+    }).then(model => {
+        //alert('done!!')
+        
+        screenshots(viewer,model);
+    })
     // var myWorker = new Worker('/worker.js');
     // myWorker.postMessage('来自外部的数据');
 
@@ -131,17 +154,17 @@ onMounted(() => {
     //     console.log("来自内部的数据：",e.data);
     // }
     document.getElementById('con111').onclick = function () {
-        document.getElementById('menu2').style.display = document.getElementById('menu2').style.display=='none'?'block':'none';
-        document.getElementById('uparrow').style.display = document.getElementById('uparrow').style.display=='none'?'block':'none';
+        document.getElementById('menu2').style.display = document.getElementById('menu2').style.display == 'none' ? 'block' : 'none';
+        document.getElementById('uparrow').style.display = document.getElementById('uparrow').style.display == 'none' ? 'block' : 'none';
     }
     document.getElementById('btn5').onclick = function () {
         let a = {
             position: viewer.camera.position,
             heading: viewer.camera.heading,
             pitch: viewer.camera.pitch,
-            roll:viewer.camera.roll
+            roll: viewer.camera.roll
         }
-        
+
         console.log(`
         {
             destination: new Cesium.Cartesian3(${a.position.x},${a.position.y}, ${a.position.z}),
@@ -157,10 +180,10 @@ onMounted(() => {
     }
     document.getElementById('btn6').onclick = function () {
         viewer.camera.flyTo({
-            destination: new Cesium.Cartesian3(-2603616.5446332945,4481005.191436875, 3705327.9231358794),
-            orientation:{
-                heading:0.19237215179223544,
-                pitch:-0.1758034864004756,
+            destination: new Cesium.Cartesian3(-2603616.5446332945, 4481005.191436875, 3705327.9231358794),
+            orientation: {
+                heading: 0.19237215179223544,
+                pitch: -0.1758034864004756,
                 roll: 2.006418142741495e-8
                 //roll: Math.pow(2.006418142741495,-8)
             }
