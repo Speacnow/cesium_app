@@ -6,7 +6,7 @@ export default function (obj) {
     const t1 = new Date();
     console.log(seq.a, seq.b, ' ...tfjs start');
 
-    let myWorker = new Worker();
+    //let myWorker = new Worker();
     let ow = myCanvas.width;
     let oh = myCanvas.height;
     //读取数据
@@ -19,4 +19,6 @@ export default function (obj) {
         callback(e.data)
         console.log(seq.a, seq.b, '...tfjs total take time: ', (new Date() - t1), 'ms');
     }
+    
+
 }

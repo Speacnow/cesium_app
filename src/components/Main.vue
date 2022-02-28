@@ -5,8 +5,9 @@
         <button id="btn2">退出</button>
         <button id="btn3">视图</button>
         <select id="select">
-            <option value="polygon">未开启图像细化</option>
-            <option value="line">开启图像细化</option>
+            <option value="thin">图像细化</option>
+            <option value="point">逐点映射</option>
+            <option value="line">邻点连接</option>
         </select>
         &nbsp;&nbsp;&nbsp;
         <input id="drawWidth" type="text" value="2" style="width:40px" />
@@ -32,7 +33,7 @@
 
             <el-col :span="10" :offset="12" id="col2">用户：admin</el-col>
         </el-header>
-        <div id="menu">
+        <div id="menu" >
             <div class="gong">
                 <img src="../assets/images/cl.png" alt /> &nbsp;量测⏷
             </div>
@@ -45,13 +46,13 @@
             <div class="gong">
                 <img src="../assets/images/gjx.png" alt /> &nbsp;工具箱⏷
             </div>
-            <div class="gong">
+            <div class="gong" id="con111">
                 <img src="../assets/images/kz.png" alt /> 裂缝识别⏷
                 <!-- <div class="up"></div> -->
             </div>
         </div>
-        <div id="uparrow"></div>
-        <div id="menu2">
+        <div id="uparrow" style="display:none"></div>
+        <div id="menu2" style="display:none">
             <div style="border-bottom:1px dashed black;margin-bottom:5px">
                 <span style="font-size: smaller ;font-weight:bold">选择模型计算方式：</span>
 
@@ -69,7 +70,7 @@
                     <el-radio :label="5" size="large">裂缝中轴线可视化</el-radio>
                 </el-radio-group>
             </div>
-            <el-button id="con111" style="font-size: smaller ;font-weight:bold">确定</el-button>
+            <el-button  style="font-size: smaller ;font-weight:bold">确定</el-button>
         </div>
         <el-main style="margin:0;padding:0">
             <div id="cesiumContainer" style="width:100%;height:100%;margin:0;padding:0"></div>
@@ -81,7 +82,6 @@ import { onMounted } from 'vue'
 import * as Cesium from "cesium";
 // import tfjsFracRec from '../utils/tfjsFracRec'
 import screenshots from '../utils/screenshots'
-import { ArrowDown } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 // import * as tf from '@tensorflow/tfjs'
@@ -131,8 +131,8 @@ onMounted(() => {
     //     console.log("来自内部的数据：",e.data);
     // }
     document.getElementById('con111').onclick = function () {
-        document.getElementById('menu2').style.display = 'none';
-        document.getElementById('uparrow').style.display = 'none';
+        document.getElementById('menu2').style.display = document.getElementById('menu2').style.display=='none'?'block':'none';
+        document.getElementById('uparrow').style.display = document.getElementById('uparrow').style.display=='none'?'block':'none';
     }
     document.getElementById('btn5').onclick = function () {
         let a = {
