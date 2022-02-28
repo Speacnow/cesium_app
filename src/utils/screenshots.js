@@ -1,6 +1,6 @@
-import tfjsFracRec from '../utils/tfjsFracRec'
+
 import img2cesium from './img2cesium';
-import tfjsFracRec2 from '../utils/tfjsFracRec2'
+
 import img2cesium2 from './img2cesium2';
 import img2cesium3 from './img2cesium3';
 import thinning_track from './thinning_track';
@@ -17,10 +17,12 @@ export default function (viewer) {
     document.getElementById('btn2').onclick = btn2;
     //数据读取原生webgl
     document.getElementById('btn1').onclick = function () {
-        (async function () {
+        new Promise((r, j) => {
+            let model = tf.loadGraphModel(MODEL_URL);
 
-            //tf.setBackend('cpu')
-            let model = await tf.loadGraphModel(MODEL_URL);
+            r(model)
+
+        }).then(model => {
             alert('done!!')
             const cesium_widget = viewer.canvas.parentNode;
             cesium_widget.style.cssText = "position:relative"
@@ -253,8 +255,16 @@ export default function (viewer) {
                 }
             };
 
+        })
+        // (async function () {
 
-        })();
+        //     //tf.setBackend('cpu')
+        //     let model = await tf.loadGraphModel(MODEL_URL);
+        //     alert('done!!')
+
+
+
+        // })();
 
     }
 }
