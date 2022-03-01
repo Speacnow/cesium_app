@@ -15,14 +15,14 @@ export default function (obj) {
     data.forEach((e, i) => {
         if (e == 1) {
             let ew = (i + 1) % cw + startX;
-            let eh = Math.ceil((i+1) / cw) + startY
+            let eh = Math.ceil((i + 1) / cw) + startY
             let cor = new Cesium.Cartesian2(ew, eh)
             let position = viewer.scene.pickPosition(cor)
             points.add({
                 position: position,
                 pixelSize: 3,
                 color: Cesium.Color.RED,
-                outlineWidth :0
+                outlineWidth: 0
 
             });
 
@@ -31,6 +31,11 @@ export default function (obj) {
     });
     const t2 = new Date();
     console.log('3D drawing take time: ', (t2 - t1), 'ms');
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+        alert('3D drawing take time: '+(t2 - t1)+'ms');
+    }
+    
+
 
 
 }

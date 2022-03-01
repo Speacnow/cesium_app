@@ -8,6 +8,7 @@ import draw from './draw';
 import * as tf from '@tensorflow/tfjs'
 // const MODEL_URL = '/ours/model.json';
 export default function (viewer, model) {
+
     
     function btn2() {
         let canvas_cover = document.getElementById("canvas_cover")
@@ -33,11 +34,14 @@ export default function (viewer, model) {
         let startX, startY;
 
         
-        canvas_cover.onmousedown = function (e) {
+        canvas_cover.ontouchstart = function (e) {
+
             if (!drag) {
+                e = e.touches[0]
                 drag = true;
-                startX = e.offsetX;
-                startY = e.offsetY;
+                startX = e.clientX;
+                startY = e.clientY;
+
                 let active_canvas = document.createElement("canvas");
                 active_canvas.classList.add("active_canvas");
                 active_canvas.style.cssText = `background: grey;position: absolute; opacity: 0.5; cursor: move;`
@@ -51,17 +55,20 @@ export default function (viewer, model) {
 
         }
         // 鼠标移动
-        canvas_cover.onmousemove = function (e) {
+        canvas_cover.ontouchmove = function (e) {
+            
             // 更新 box 尺寸
             if (drag && document.getElementsByClassName("active_canvas")[0]) {
+                e = e.touches[0]
                 let active_canvas = document.getElementsByClassName("active_canvas")[0];
-                active_canvas.style.width = e.offsetX - startX + 'px';
-                active_canvas.style.height = e.offsetY - startY + 'px';
+                active_canvas.style.width = e.clientX - startX + 'px';
+                active_canvas.style.height = e.clientY - startY + 'px';
+                
             }
 
         };
         // 鼠标抬起
-        canvas_cover.onmouseup = function (e) {
+        canvas_cover.ontouchend = function (e) {
 
             if (drag && document.getElementsByClassName("active_canvas")[0]) {
                 let active_canvas = document.getElementsByClassName("active_canvas")[0];
@@ -70,13 +77,14 @@ export default function (viewer, model) {
 
                 let box_width = Number(active_canvas.style.width.split('px')[0]);
                 let box_height = Number(active_canvas.style.height.split('px')[0]);
-                active_canvas.width = box_width;
-                active_canvas.height = box_height;
+                active_canvas.width = box_width.toFixed(0);
+                active_canvas.height = box_height.toFixed(0);
 
                 let bigwidth = viewer.canvas.width;
                 let bigheight = viewer.canvas.height;
                 let gl = viewer.canvas.getContext('webgl');
                 let pixels = new Uint8Array(box_width * box_height * 4);
+
                 gl.readPixels(startX, bigheight - startY - box_height, box_width, box_height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 
                 let copy = [];
@@ -84,7 +92,9 @@ export default function (viewer, model) {
                 for (let row = box_height - 1; row >= 0; row--) {
                     copy.push(Array.from(pixels.slice(row * box_width * 4, (row + 1) * box_width * 4)))
                 }
+
                 pixels = new Uint8Array(copy.flat())
+
                 let imageData = new ImageData(new Uint8ClampedArray(pixels), box_width, box_height);
                 active_canvas.getContext('2d').putImageData(imageData, 0, 0);
                 /**
@@ -98,11 +108,11 @@ export default function (viewer, model) {
                     //截图图像总长宽
                     let W = doms[i].width
                     let H = doms[i].height
-                    console.log('---总长宽----', W, H);
+
                     //被256*256分割横向与纵向的数量
                     let W_number = Math.round(W / rate) == 0 ? 1 : Math.round(W / rate)
                     let H_number = Math.round(H / rate) == 0 ? 1 : Math.round(H / rate)
-                    console.log('---数量----', W_number, H_number);
+
                     //每个小图形的长宽 注意分割canvas要注意除不整的情况
 
                     let w = Math.floor(W / W_number)
@@ -212,7 +222,7 @@ export default function (viewer, model) {
                             // tfjsFracRec2({ myCanvas: canvas, callback, seq })
                             //开始识别
                             const t1 = new Date();
-                            console.log(seq.a, seq.b, ' ...tfjs start');
+     
                             let ow = canvas.width;
                             let oh = canvas.height;
                             tf.tidy(() => {
@@ -235,8 +245,9 @@ export default function (viewer, model) {
                                 x = tf.cast(x, 'float32')
                                 let data = x.dataSync()
                                 callback(data)
-                                console.log(seq.a, seq.b, '...tfjs total take time: ', (new Date() - t1), 'ms');
-                                
+           
+                                let t2 = new Date()
+                                alert('模型预测时间：'+(t2 - t1)+'ms')
                             })
 
                         }

@@ -1,6 +1,6 @@
 
 <template>
-    <div style=" position: fixed; bottom:0">
+    <div style=" position: fixed; bottom:0;z-index:1000">
         <button id="btn1">截图</button>
         <button id="btn2">退出</button>
         <button id="btn3">视图</button>
@@ -33,7 +33,7 @@
 
             <el-col :span="10" :offset="12" id="col2">用户：admin</el-col>
         </el-header>
-        <div id="menu">
+        <div id="menu" style="display:none">
             <div class="gong">
                 <img src="../assets/images/cl.png" alt /> &nbsp;量测⏷
             </div>
@@ -81,7 +81,8 @@
 import { onBeforeMount, onMounted } from 'vue'
 import * as Cesium from "cesium";
 // import tfjsFracRec from '../utils/tfjsFracRec'
-import screenshots from '../utils/screenshots'
+import screenshots from '../utils/screenshots';
+import screenshots_mobile from '../utils/screenshots_mobile'
 import { ref } from 'vue'
 import * as tf from '@tensorflow/tfjs'
 const MODEL_URL = '/ours/model.json';
@@ -105,7 +106,10 @@ const radio2 = ref('3')
 
 
 onMounted(() => {
-
+    // //cesium_widget.style.cssText = "position:relative"
+    // document.getElementsByTagName('html')[0].style.cssText = `height:${window.innerHeight}px`;
+    // document.getElementsByTagName('body')[0].style.cssText = `height:${window.innerHeight}px`;
+    document.getElementById('cesiumContainer').style.cssText = `height:${window.innerHeight}px`;
 
     const viewer = new Cesium.Viewer('cesiumContainer', {
         animation: false,    //左下角的动画仪表盘
@@ -138,15 +142,36 @@ onMounted(() => {
         viewer.zoomTo(tileset)
     }
     //加载截图功能
-    
-    new Promise((r, j) => {
-        let model = tf.loadGraphModel(MODEL_URL);
-        r(model)
-    }).then(model => {
-        //alert('done!!')
-        
-        screenshots(viewer,model);
-    })
+    if (/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent)) {
+
+        new Promise((r, j) => {
+            let model = tf.loadGraphModel(MODEL_URL);
+            r(model)
+        }).then(model => {
+            //alert('done!!')
+
+            screenshots_mobile(viewer, model);
+        })
+    } else {
+ 
+        new Promise((r, j) => {
+            let model = tf.loadGraphModel(MODEL_URL);
+            r(model)
+        }).then(model => {
+            //alert('done!!')
+
+            screenshots(viewer, model);
+        })
+    }
+
+    // new Promise((r, j) => {
+    //     let model = tf.loadGraphModel(MODEL_URL);
+    //     r(model)
+    // }).then(model => {
+    //     //alert('done!!')
+
+    //     screenshots(viewer, model);
+    // })
     // var myWorker = new Worker('/worker.js');
     // myWorker.postMessage('来自外部的数据');
 
