@@ -27,8 +27,11 @@ export default function (obj) {
             }
             count++
         }
-        drawline(array)
-        array = []
+        if (array.length > 0) {
+            drawline(array)
+            array = []
+
+        }
         is_connecting = false;
     }
     //竖着绘制
@@ -54,8 +57,11 @@ export default function (obj) {
             }
 
         }
-        drawline(array2)
-        array2 = []
+        if (array2.length > 0) {
+            drawline(array2)
+            array2 = []
+
+        }
         is_connecting2 = false;
     }
 
@@ -71,6 +77,7 @@ export default function (obj) {
                 material: Cesium.Color.RED,
             },
         });
+        console.log(array);
         // polylines.add({
         //     positions: array,
         //     width: 3,
